@@ -5,6 +5,7 @@
 
 #include <ppbox/common/CommonModuleBase.h>
 
+#ifndef PPBOX_CONTAIN_LIVE_WORKER
 #include <framework/process/NamedMutex.h>
 using namespace framework::process;
 
@@ -13,6 +14,7 @@ namespace framework
     namespace process { class Process; }
     namespace timer { class Timer; }
 }
+#endif
 
 namespace ppbox
 {
@@ -42,10 +44,12 @@ namespace ppbox
 
             bool is_alive();
 
+#ifndef PPBOX_CONTAIN_LIVE_WORKER
             framework::process::Process const & process() const
             {
                 return *process_;
             }
+#endif
 
         public:
             static std::string version();
@@ -55,18 +59,22 @@ namespace ppbox
         private:
             void check();
 
+#ifndef PPBOX_CONTAIN_LIVE_WORKER
             bool is_lock();
+#endif
 
         private:
             boost::uint16_t port_;
 
         private:
+#ifndef PPBOX_CONTAIN_LIVE_WORKER
             framework::process::Process * process_;
             framework::timer::Timer * timer_;
 
             NamedMutex mutex_;
 
             bool is_locked_;
+#endif
         };
 
     }

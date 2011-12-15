@@ -8,16 +8,22 @@
 #include <ppbox/live_worker/Name.h>
 using namespace ppbox::dac;
 
+#ifdef PPBOX_CONTAIN_LIVE_WORKER
+#include <ppbox/live_worker/LiveProxy.h>
+using namespace ppbox::live_worker;
+#else
+#include <framework/process/Process.h>
+#include <framework/timer/Timer.h>
+using namespace framework::process;
+using namespace framework::timer;
+#endif
+
 #include <framework/system/ErrorCode.h>
 #include <framework/system/LogicError.h>
 #include <framework/string/Format.h>
-#include <framework/process/Process.h>
-#include <framework/timer/Timer.h>
 #include <framework/logger/LoggerStreamRecord.h>
 using namespace framework::system;
 using namespace framework::string;
-using namespace framework::process;
-using namespace framework::timer;
 using namespace framework::logger;
 
 #include <boost/bind.hpp>
@@ -30,21 +36,34 @@ namespace ppbox
     namespace live
     {
 
+#ifdef PPBOX_CONTAIN_LIVE_WORKER
         Live::Live(
+            util::daemon::Daemon & daemon)
+            : ppbox::common::CommonModuleBase<Live>(daemon, "Live")
+            , port_(9001)
+        {
+            util::daemon::use_module<ppbox::live_worker::LiveProxy>(daemon);
+        }
+#else
+        Live::Live(
+
             util::daemon::Daemon & daemon)
             : ppbox::common::CommonModuleBase<Live>(daemon, "Live")
             , port_(9001)
             , mutex_(9001)
             , is_locked_(false)
         {
+ 
             process_ = new Process;
             timer_ = new Timer(timer_queue(), 
                 10, // 5 seconds
                 boost::bind(&Live::check, this));
         }
+#endif
 
         Live::~Live()
         {
+#ifndef PPBOX_CONTAIN_LIVE_WORKER
             if (is_lock()) {
                 mutex_.unlock();
                 is_locked_ = false;
@@ -57,13 +76,14 @@ namespace ppbox
                 delete timer_;
                 timer_ = NULL;
             }
+#endif
         }
 
         error_code Live::startup()
         {
             error_code ec;
             LOG_S(Logger::kLevelEvent, "[startup]");
-
+#ifndef PPBOX_CONTAIN_LIVE_WORKER
             timer_->start();
 
             if (is_lock()) {
@@ -85,11 +105,13 @@ namespace ppbox
                     timer_->stop();
                 }
             }
+#endif
             return ec;
         }
 
         void Live::check()
         {
+#ifndef PPBOX_CONTAIN_LIVE_WORKER
             error_code ec;
             if (is_lock()) {
                 if (process_ && !process_->is_alive(ec)) {
@@ -114,11 +136,15 @@ namespace ppbox
                     }
                 }
             }
+#endif
         }
 
         bool Live::is_alive()
         {
             error_code ec;
+#ifdef PPBOX_CONTAIN_LIVE_WORKER
+            return true;
+#else
             if (is_locked_) {
                 return process_ && process_->is_alive(ec);
             } else {
@@ -127,10 +153,12 @@ namespace ppbox
                 process.open(cmd_file, ec);
                 return !ec;
             }
+#endif
         }
 
         void Live::shutdown()
         {
+#ifndef PPBOX_CONTAIN_LIVE_WORKER
             error_code ec;
             if (process_) {
                 error_code ec;
@@ -151,6 +179,7 @@ namespace ppbox
                 mutex_.unlock();
                 is_locked_ = false;
             }
+#endif
         }
 
         std::string Live::version()
@@ -164,6 +193,7 @@ namespace ppbox
             return ppbox::live_worker::name_string();
         }
 
+#ifndef PPBOX_CONTAIN_LIVE_WORKER
         bool Live::is_lock()
         {
             if (!is_locked_) {
@@ -172,6 +202,7 @@ namespace ppbox
 
             return is_locked_;
         }
+#endif
 
     } // namespace live
 } // namespace ppbox
