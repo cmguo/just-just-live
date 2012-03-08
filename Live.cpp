@@ -2,11 +2,13 @@
 
 #include "ppbox/live/Common.h"
 #include "ppbox/live/Live.h"
-
+#ifndef PPBOX_DISABLE_DAC
 #include <ppbox/dac/Dac.h>
+using namespace ppbox::dac;
+#endif
 //#include <ppbox/live_worker/Version.h>
 #include <ppbox/live_worker/Name.h>
-using namespace ppbox::dac;
+
 
 #ifdef PPBOX_CONTAIN_LIVE_WORKER
 #include <ppbox/live_worker/LiveProxy.h>
