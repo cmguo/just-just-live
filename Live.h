@@ -4,6 +4,11 @@
 #define _PPBOX_LIVE_LIVE_H_
 
 #include <ppbox/common/CommonModuleBase.h>
+#include <ppbox/common/PortManager.h>
+
+#ifndef PPBOX_DISABLE_DAC
+#include <ppbox/dac/Dac.h>
+#endif
 
 #ifndef PPBOX_CONTAIN_LIVE_WORKER
 #include <framework/process/NamedMutex.h>
@@ -64,6 +69,11 @@ namespace ppbox
 #endif
 
         private:
+#ifndef PPBOX_DISABLE_DAC
+            ppbox::dac::Dac& dac_;
+#endif
+            ppbox::common::PortManager &portMgr_;
+
             boost::uint16_t port_;
 
         private:

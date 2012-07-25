@@ -42,6 +42,10 @@ namespace ppbox
         Live::Live(
             util::daemon::Daemon & daemon)
             : ppbox::common::CommonModuleBase<Live>(daemon, "Live")
+#ifndef PPBOX_DISABLE_DAC
+            , dac_(util::daemon::use_module<ppbox::dac::Dac>(daemon))
+#endif
+            , portMgr_(util::daemon::use_module<ppbox::common::PortManager>(daemon))
             , port_(9001)
         {
             util::daemon::use_module<ppbox::live_worker::LiveProxy>(daemon);
@@ -51,11 +55,15 @@ namespace ppbox
 
             util::daemon::Daemon & daemon)
             : ppbox::common::CommonModuleBase<Live>(daemon, "Live")
+#ifndef PPBOX_DISABLE_DAC
+            , dac_(util::daemon::use_module<ppbox::dac::Dac>(daemon))
+#endif
+            , portMgr_(util::daemon::use_module<ppbox::common::PortManager>(daemon))
             , port_(9001)
             , mutex_(9001)
             , is_locked_(false)
         {
- 
+
             process_ = new Process;
             timer_ = new Timer(timer_queue(), 
                 10, // 5 seconds
@@ -85,6 +93,10 @@ namespace ppbox
         {
             error_code ec;
             LOG_S(Logger::kLevelEvent, "[startup]");
+#ifndef PPBOX_DISABLE_DAC
+            dac_.set_live_version(version());
+            dac_.set_live_name(name());
+#endif
 #ifndef PPBOX_CONTAIN_LIVE_WORKER
             timer_->start();
 
@@ -96,7 +108,8 @@ namespace ppbox
                 param.wait = true;
                 process_->open(cmd_file, param, ec);
                 if (!ec) {
-                    LOG_S(Logger::kLevelEvent, "[startup] ok");
+                    portMgr_.get_port(ppbox::common::live,port_);
+                    LOG_S(Logger::kLevelEvent, "[startup] ok port:"<<port_);
                 } else {
                     LOG_S(Logger::kLevelAlarm, "[startup] ec = " << ec.message());
                     //port_ = 0;
@@ -129,7 +142,8 @@ namespace ppbox
                     param.wait = true;
                     process_->open(cmd_file, param, ec);
                     if (!ec) {
-                        LOG_S(Logger::kLevelEvent, "[check] ok");
+                        portMgr_.get_port(ppbox::common::live,port_);
+                        LOG_S(Logger::kLevelEvent, "[check] ok port:"<<port_);
                     } else {
                         LOG_S(Logger::kLevelAlarm, "[check] ec = " << ec.message());
                         port_ = 0;
@@ -138,6 +152,9 @@ namespace ppbox
                     }
                 }
             }
+#else
+          portMgr_.get_port(ppbox::common::live,port_);
+          LOG_S(Logger::kLevelEvent, "[check] ok port:"<<port_);	
 #endif
         }
 

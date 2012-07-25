@@ -49,6 +49,7 @@ PROJECT_LINK_FLAGS		:=
 ## 该项目依赖的其他项目
 
 PROJECT_DEPENDS			:= \
+				/ppbox/dac \
 				/ppbox/common \
 				$(PROJECT_DEPENDS)
 
