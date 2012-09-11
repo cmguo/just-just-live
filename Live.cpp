@@ -44,7 +44,7 @@ namespace ppbox
             util::daemon::Daemon & daemon)
             : ppbox::common::CommonModuleBase<Live>(daemon, "Live")
 #ifndef PPBOX_DISABLE_DAC
-            , dac_(util::daemon::use_module<ppbox::dac::Dac>(daemon))
+            , dac_(util::daemon::use_module<ppbox::dac::DacModule>(daemon))
 #endif
             , portMgr_(util::daemon::use_module<ppbox::common::PortManager>(daemon))
             , port_(9001)
@@ -57,7 +57,7 @@ namespace ppbox
             util::daemon::Daemon & daemon)
             : ppbox::common::CommonModuleBase<Live>(daemon, "Live")
 #ifndef PPBOX_DISABLE_DAC
-            , dac_(util::daemon::use_module<ppbox::dac::Dac>(daemon))
+            , dac_(util::daemon::use_module<ppbox::dac::DacModule>(daemon))
 #endif
             , portMgr_(util::daemon::use_module<ppbox::common::PortManager>(daemon))
             , port_(9001)
@@ -134,7 +134,7 @@ namespace ppbox
                     LOG_ERROR("[check] worker is dead: " << ec.message());
 
 #ifndef PPBOX_DISABLE_DAC
-                    util::daemon::use_module<ppbox::dac::Dac>(get_daemon())
+                    util::daemon::use_module<ppbox::dac::DacModule>(get_daemon())
                         .run_info(CoreType::live);
 #endif
                     process_->close(ec);
