@@ -7,7 +7,7 @@
 #include <ppbox/common/PortManager.h>
 
 #ifndef PPBOX_DISABLE_DAC
-#include <ppbox/dac/Dac.h>
+#include <ppbox/dac/DacModule.h>
 #endif
 
 #ifndef PPBOX_CONTAIN_LIVE_WORKER

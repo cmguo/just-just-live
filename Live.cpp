@@ -3,7 +3,8 @@
 #include "ppbox/live/Common.h"
 #include "ppbox/live/Live.h"
 #ifndef PPBOX_DISABLE_DAC
-#include <ppbox/dac/Dac.h>
+#include <ppbox/dac/DacModule.h>
+#include <ppbox/dac/DacInfoWorker.h>
 using namespace ppbox::dac;
 #endif
 //#include <ppbox/live_worker/Version.h>
@@ -135,7 +136,7 @@ namespace ppbox
 
 #ifndef PPBOX_DISABLE_DAC
                     util::daemon::use_module<ppbox::dac::DacModule>(get_daemon())
-                        .run_info(CoreType::live);
+                        .submit(DacRestartInfo(CoreType::live));
 #endif
                     process_->close(ec);
                     boost::filesystem::path cmd_file(ppbox::live_worker::name_string());
