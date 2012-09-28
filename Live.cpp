@@ -136,7 +136,7 @@ namespace ppbox
 
 #ifndef PPBOX_DISABLE_DAC
                     util::daemon::use_module<ppbox::dac::DacModule>(get_daemon())
-                        .submit(DacRestartInfo(CoreType::live));
+                        .submit(DacRestartInfo(DacRestartInfo::live));
 #endif
                     process_->close(ec);
                     boost::filesystem::path cmd_file(ppbox::live_worker::name_string());
