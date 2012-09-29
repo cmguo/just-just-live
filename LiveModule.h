@@ -1,7 +1,7 @@
-// Live.h
+// LiveModule.h
 
-#ifndef _PPBOX_LIVE_LIVE_H_
-#define _PPBOX_LIVE_LIVE_H_
+#ifndef _PPBOX_LIVE_LIVE_MODULE_H_
+#define _PPBOX_LIVE_LIVE_MODULE_H_
 
 #include <ppbox/common/CommonModuleBase.h>
 #include <ppbox/common/PortManager.h>
@@ -27,14 +27,14 @@ namespace ppbox
     namespace live
     {
 
-        class Live
-            : public ppbox::common::CommonModuleBase<Live>
+        class LiveModule
+            : public ppbox::common::CommonModuleBase<LiveModule>
         {
         public:
-            Live(
+            LiveModule(
                 util::daemon::Daemon & daemon);
 
-            ~Live();
+            ~LiveModule();
 
         public:
             virtual boost::system::error_code startup();
@@ -90,4 +90,4 @@ namespace ppbox
     }
 }
 
-#endif // _PPBOX_LIVE_LIVE_H_
+#endif // _PPBOX_LIVE_LIVE_MODULE_H_
