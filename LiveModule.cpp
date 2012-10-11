@@ -33,7 +33,7 @@ using namespace framework::logger;
 #include <boost/bind.hpp>
 using namespace boost::system;
 
-FRAMEWORK_LOGGER_DECLARE_MODULE_LEVEL("LiveModule", 0)
+FRAMEWORK_LOGGER_DECLARE_MODULE_LEVEL("ppbox.live.LiveModule", Debug)
 
 namespace ppbox
 {
