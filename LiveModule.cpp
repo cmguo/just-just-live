@@ -28,12 +28,11 @@ using namespace framework::timer;
 #include <framework/logger/StreamRecord.h>
 using namespace framework::system;
 using namespace framework::string;
-using namespace framework::logger;
 
 #include <boost/bind.hpp>
 using namespace boost::system;
 
-FRAMEWORK_LOGGER_DECLARE_MODULE_LEVEL("ppbox.live.LiveModule", Debug)
+FRAMEWORK_LOGGER_DECLARE_MODULE_LEVEL("ppbox.live.LiveModule", framework::logger::Debug)
 
 namespace ppbox
 {
