@@ -2,6 +2,9 @@
 
 #include "ppbox/live/Common.h"
 #include "ppbox/live/LiveModule.h"
+#define PPBOX_ENABLE_REGISTER_CLASS
+#include "ppbox/live/LiveSource.h"
+
 #ifndef PPBOX_DISABLE_DAC
 #include <ppbox/dac/DacModule.h>
 #include <ppbox/dac/DacInfoWorker.h>
