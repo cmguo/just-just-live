@@ -94,6 +94,7 @@ namespace ppbox
             util::event::Event const & e)
         {
             ppbox::demux::BufferingEvent const & event = *e.as<ppbox::demux::BufferingEvent>();
+            (void)event;
         }
 
         void LiveSource::parse_param(
