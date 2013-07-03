@@ -42,7 +42,7 @@ namespace ppbox
 
         private:
             virtual void on_demux_stat(
-                ppbox::demux::DemuxStatistic const & stat) = 0;
+                ppbox::demux::DemuxStatistic const & stat);
 
             virtual void parse_param(
                 std::string const & params);
