@@ -90,11 +90,10 @@ namespace ppbox
             return boost::uint64_t(0x8000000000000000ULL); // 一个非常大的数值，假设永远下载不完
         }
 
-        void LiveSource::on_event(
-            util::event::Event const & e)
+        void LiveSource::on_demux_stat(
+            ppbox::demux::DemuxStatistic const & stat)
         {
-            ppbox::demux::BufferingEvent const & event = *e.as<ppbox::demux::BufferingEvent>();
-            (void)event;
+            (void)stat;
         }
 
         void LiveSource::parse_param(

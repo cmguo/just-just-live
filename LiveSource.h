@@ -41,8 +41,8 @@ namespace ppbox
                 boost::system::error_code & ec);
 
         private:
-            virtual void on_event(
-                util::event::Event const & e);
+            virtual void on_demux_stat(
+                ppbox::demux::DemuxStatistic const & stat) = 0;
 
             virtual void parse_param(
                 std::string const & params);
