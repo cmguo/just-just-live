@@ -22,21 +22,6 @@ namespace ppbox
             virtual ~LiveSource();
 
         public:
-            virtual boost::system::error_code open(
-                framework::string::Url const & url,
-                boost::uint64_t beg, 
-                boost::uint64_t end, 
-                boost::system::error_code & ec);
-
-            virtual void async_open(
-                framework::string::Url const & url,
-                boost::uint64_t beg, 
-                boost::uint64_t end, 
-                response_type const & resp);
-
-            virtual boost::system::error_code close(
-                boost::system::error_code & ec);
-
             virtual boost::uint64_t total(
                 boost::system::error_code & ec);
 
@@ -47,9 +32,11 @@ namespace ppbox
             virtual void parse_param(
                 std::string const & params);
 
-            boost::system::error_code make_url(
-                framework::string::Url const & cdn_url, 
-                framework::string::Url & url);
+            virtual boost::system::error_code prepare(
+                framework::string::Url & url, 
+                boost::uint64_t & beg, 
+                boost::uint64_t & end, 
+                boost::system::error_code & ec);
 
         protected:
             LiveModule & module_;

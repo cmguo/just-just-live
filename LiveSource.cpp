@@ -20,8 +20,6 @@ using namespace util::protocol;
 #include <framework/string/Format.h>
 using namespace framework::string;
 
-#include <boost/bind.hpp>
-
 namespace ppbox
 {
     namespace live
@@ -38,49 +36,6 @@ namespace ppbox
 
         LiveSource::~LiveSource()
         {
-        }
-
-        boost::system::error_code LiveSource::open(
-            framework::string::Url const & url,
-            boost::uint64_t beg, 
-            boost::uint64_t end, 
-            boost::system::error_code & ec)
-        {
-            LOG_DEBUG("[open] url:"<<url.to_string()
-                <<" range: "<< beg << " - " << end);
-
-            if (beg > 0) {
-                // 不能断点续传
-                return ec = framework::system::logic_error::not_supported;
-            }
-            framework::string::Url peer_url;
-            make_url(url, peer_url);
-            return HttpSource::open(peer_url, beg, end, ec);
-        }
-
-        void LiveSource::async_open(
-            framework::string::Url const & url,
-            boost::uint64_t beg, 
-            boost::uint64_t end, 
-            response_type const & resp)
-        {
-            LOG_DEBUG("[async_open] url:"<<url.to_string()
-                <<" range: "<< beg << " - " << end);
-
-            if (beg > 0) {
-                get_io_service().post(boost::bind(resp, framework::system::logic_error::not_supported));
-                return;
-            }
-            framework::string::Url peer_url;
-            make_url(url, peer_url);
-            HttpSource::async_open(peer_url, beg, end, resp);
-        }
-
-        boost::system::error_code LiveSource::close(
-            boost::system::error_code & ec)
-        {
-            open_log(true);
-            return HttpSource::close(ec);
         }
 
         boost::uint64_t LiveSource::total(
@@ -102,19 +57,22 @@ namespace ppbox
             const_cast<ppbox::data::SegmentSource &>(seg_source()).set_time_out(0);
         }
 
-        boost::system::error_code LiveSource::make_url(
-            framework::string::Url const & cdn_url,
-            framework::string::Url & url)
+        boost::system::error_code LiveSource::prepare(
+            framework::string::Url & url, 
+            boost::uint64_t & beg, 
+            boost::uint64_t & end, 
+            boost::system::error_code & ec)
         {
-            LOG_DEBUG("Use vod worker, BWType: " << pptv_media().jump().bw_type);
+            LOG_DEBUG("Use live worker, BWType: " << pptv_media().jump().bw_type);
 
-            url.protocol("http");
-            url.host("127.0.0.1");
-            url.svc(format(module_.port()));
+            if (beg > 0) {
+                // 不能断点续传
+                return ec = framework::system::logic_error::not_supported;
+            }
 
-            std::string url_str = cdn_url.param("url");
-            framework::string::Url::param_const_iterator iter = cdn_url.param_begin();
-            for (; iter != cdn_url.param_end(); ++iter) {
+            std::string url_str = url.param("url");
+            framework::string::Url::param_const_iterator iter = url.param_begin();
+            for (; iter != url.param_end(); ++iter) {
                 framework::string::Url::Parameter const & p = *iter;
                 if (p.key() != "url") {
                     url_str += "&";
@@ -122,10 +80,13 @@ namespace ppbox
                 }
             }
 
+            url = framework::string::Url();
+            url.protocol("http");
+            url.host("127.0.0.1");
+            url.svc(format(module_.port()));
+
             std::string key = "pplive";
             url.path("/" + pptv::base64_encode(url_str, key));
-
-            open_log(false);
 
             return boost::system::error_code();
         }
