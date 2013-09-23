@@ -57,7 +57,7 @@ namespace ppbox
             const_cast<ppbox::data::SegmentSource &>(seg_source()).set_time_out(0);
         }
 
-        boost::system::error_code LiveSource::prepare(
+        bool LiveSource::prepare(
             framework::string::Url & url, 
             boost::uint64_t & beg, 
             boost::uint64_t & end, 
@@ -67,7 +67,8 @@ namespace ppbox
 
             if (beg > 0) {
                 // 不能断点续传
-                return ec = framework::system::logic_error::not_supported;
+                ec = framework::system::logic_error::not_supported;
+                return false;
             }
 
             std::string url_str = url.param("url");
@@ -88,7 +89,8 @@ namespace ppbox
             std::string key = "pplive";
             url.path("/" + pptv::base64_encode(url_str, key));
 
-            return boost::system::error_code();
+            ec = boost::system::error_code();
+            return true;
         }
 
     } // namespace live

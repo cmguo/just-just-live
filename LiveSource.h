@@ -32,7 +32,7 @@ namespace ppbox
             virtual void parse_param(
                 std::string const & params);
 
-            virtual boost::system::error_code prepare(
+            virtual bool prepare(
                 framework::string::Url & url, 
                 boost::uint64_t & beg, 
                 boost::uint64_t & end, 
@@ -42,7 +42,7 @@ namespace ppbox
             LiveModule & module_;
         };
 
-        PPBOX_REGISTER_URL_SOURCE("pplive", LiveSource);
+        UTIL_REGISTER_URL_SOURCE("pplive", LiveSource);
 
     } // namespace peer
 } // namespace ppbox
