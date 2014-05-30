@@ -72,6 +72,8 @@ namespace ppbox
             }
 
             std::string url_str = url.param("url");
+            std::string key = url.param_or("cdn.key", "pplive");
+
             framework::string::Url::param_const_iterator iter = url.param_begin();
             for (; iter != url.param_end(); ++iter) {
                 framework::string::Url::Parameter const & p = *iter;
@@ -86,7 +88,6 @@ namespace ppbox
             url.host("127.0.0.1");
             url.svc(format(module_.port()));
 
-            std::string key = "pplive";
             url.path("/" + pptv::base64_encode(url_str, key));
 
             ec = boost::system::error_code();
