@@ -115,6 +115,9 @@ namespace ppbox
                     timer_->stop();
                 }
             }
+#else
+          portMgr_.get_port(ppbox::common::live,port_);
+          LOG_INFO("[startup] ok port:"<<port_);	
 #endif
             return ec;
         }
@@ -147,9 +150,6 @@ namespace ppbox
                     }
                 }
             }
-#else
-          portMgr_.get_port(ppbox::common::live,port_);
-          LOG_INFO("[check] ok port:"<<port_);	
 #endif
         }
 
