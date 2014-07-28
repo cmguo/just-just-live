@@ -26,8 +26,8 @@ namespace ppbox
                 boost::system::error_code & ec);
 
         private:
-            virtual void on_demux_stat(
-                ppbox::demux::DemuxStatistic const & stat);
+            virtual void on_stream_status(
+                ppbox::data::StreamStatus const & stat);
 
             virtual void parse_param(
                 std::string const & params);
