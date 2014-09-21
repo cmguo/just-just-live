@@ -46,7 +46,7 @@ namespace ppbox
         }
 
         void LiveSource::on_stream_status(
-            ppbox::data::StreamStatus const & stat)
+            ppbox::avbase::StreamStatus const & stat)
         {
             (void)stat;
         }

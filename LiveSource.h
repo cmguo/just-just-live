@@ -27,7 +27,7 @@ namespace ppbox
 
         private:
             virtual void on_stream_status(
-                ppbox::data::StreamStatus const & stat);
+                ppbox::avbase::StreamStatus const & stat);
 
             virtual void parse_param(
                 std::string const & params);
