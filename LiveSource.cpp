@@ -3,7 +3,7 @@
 #include "ppbox/live/Common.h"
 #include "ppbox/live/LiveSource.h"
 
-#include <ppbox/cdn/PptvMedia.h>
+#include <ppbox/cdn/pptv/PptvMedia.h>
 
 #include <ppbox/demux/base/DemuxEvent.h>
 #include <ppbox/demux/segment/SegmentDemuxer.h>
