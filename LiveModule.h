@@ -1,16 +1,16 @@
 // LiveModule.h
 
-#ifndef _PPBOX_LIVE_LIVE_MODULE_H_
-#define _PPBOX_LIVE_LIVE_MODULE_H_
+#ifndef _JUST_LIVE_LIVE_MODULE_H_
+#define _JUST_LIVE_LIVE_MODULE_H_
 
-#include <ppbox/common/CommonModuleBase.h>
-#include <ppbox/common/PortManager.h>
+#include <just/common/CommonModuleBase.h>
+#include <just/common/PortManager.h>
 
-#ifndef PPBOX_DISABLE_DAC
-#include <ppbox/dac/DacModule.h>
+#ifndef JUST_DISABLE_DAC
+#include <just/dac/DacModule.h>
 #endif
 
-#ifndef PPBOX_CONTAIN_LIVE_WORKER
+#ifndef JUST_CONTAIN_LIVE_WORKER
 #include <framework/process/NamedMutex.h>
 using namespace framework::process;
 
@@ -21,14 +21,14 @@ namespace framework
 }
 #endif
 
-namespace ppbox
+namespace just
 {
 
     namespace live
     {
 
         class LiveModule
-            : public ppbox::common::CommonModuleBase<LiveModule>
+            : public just::common::CommonModuleBase<LiveModule>
         {
         public:
             LiveModule(
@@ -49,7 +49,7 @@ namespace ppbox
 
             bool is_alive();
 
-#ifndef PPBOX_CONTAIN_LIVE_WORKER
+#ifndef JUST_CONTAIN_LIVE_WORKER
             framework::process::Process const & process() const
             {
                 return *process_;
@@ -64,20 +64,20 @@ namespace ppbox
         private:
             void check();
 
-#ifndef PPBOX_CONTAIN_LIVE_WORKER
+#ifndef JUST_CONTAIN_LIVE_WORKER
             bool is_lock();
 #endif
 
         private:
-#ifndef PPBOX_DISABLE_DAC
-            ppbox::dac::DacModule& dac_;
+#ifndef JUST_DISABLE_DAC
+            just::dac::DacModule& dac_;
 #endif
-            ppbox::common::PortManager &portMgr_;
+            just::common::PortManager &portMgr_;
 
             boost::uint16_t port_;
 
         private:
-#ifndef PPBOX_CONTAIN_LIVE_WORKER
+#ifndef JUST_CONTAIN_LIVE_WORKER
             framework::process::Process * process_;
             framework::timer::Timer * timer_;
 
@@ -90,4 +90,4 @@ namespace ppbox
     }
 }
 
-#endif // _PPBOX_LIVE_LIVE_MODULE_H_
+#endif // _JUST_LIVE_LIVE_MODULE_H_

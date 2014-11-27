@@ -1,9 +1,9 @@
 // Error.h
 
-#ifndef _PPBOX_LIVE_ERROR_H_
-#define _PPBOX_LIVE_ERROR_H_
+#ifndef _JUST_LIVE_ERROR_H_
+#define _JUST_LIVE_ERROR_H_
 
-namespace ppbox
+namespace just
 {
     namespace live
     {
@@ -55,7 +55,7 @@ namespace ppbox
         } // namespace live_error
 
     } // namespace live
-} // namespace ppbox
+} // namespace just
 
 namespace boost
 {
@@ -63,16 +63,16 @@ namespace boost
     {
 
         template<>
-        struct is_error_code_enum<ppbox::live::error::errors>
+        struct is_error_code_enum<just::live::error::errors>
         {
             BOOST_STATIC_CONSTANT(bool, value = true);
         };
 
 #ifdef BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP
-        using ppbox::live::error::make_error_code;
+        using just::live::error::make_error_code;
 #endif
 
     }
 }
 
-#endif // _PPBOX_PPAP_ERROR_H_
+#endif // _JUST_PPAP_ERROR_H_

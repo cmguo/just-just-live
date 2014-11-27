@@ -1,21 +1,21 @@
 // LiveModule.cpp
 
-#include "ppbox/live/Common.h"
-#include "ppbox/live/LiveModule.h"
-#include "ppbox/live/ClassRegister.h"
+#include "just/live/Common.h"
+#include "just/live/LiveModule.h"
+#include "just/live/ClassRegister.h"
 
-#ifndef PPBOX_DISABLE_DAC
-#include <ppbox/dac/DacModule.h>
-#include <ppbox/dac/DacInfoWorker.h>
-using namespace ppbox::dac;
+#ifndef JUST_DISABLE_DAC
+#include <just/dac/DacModule.h>
+#include <just/dac/DacInfoWorker.h>
+using namespace just::dac;
 #endif
-//#include <ppbox/live_worker/Version.h>
-#include <ppbox/live_worker/Name.h>
+//#include <just/live_worker/Version.h>
+#include <just/live_worker/Name.h>
 
 
-#ifdef PPBOX_CONTAIN_LIVE_WORKER
-#include <ppbox/live_worker/LiveProxy.h>
-using namespace ppbox::live_worker;
+#ifdef JUST_CONTAIN_LIVE_WORKER
+#include <just/live_worker/LiveProxy.h>
+using namespace just::live_worker;
 #else
 #include <framework/process/Process.h>
 #include <framework/timer/Timer.h>
@@ -34,30 +34,29 @@ using namespace framework::string;
 #include <boost/bind.hpp>
 using namespace boost::system;
 
-FRAMEWORK_LOGGER_DECLARE_MODULE_LEVEL("ppbox.live.LiveModule", framework::logger::Debug)
+FRAMEWORK_LOGGER_DECLARE_MODULE_LEVEL("just.live.LiveModule", framework::logger::Debug)
 
-namespace ppbox
+namespace just
 {
     namespace live
     {
 
         LiveModule::LiveModule(
-
             util::daemon::Daemon & daemon)
-            : ppbox::common::CommonModuleBase<LiveModule>(daemon, "LiveModule")
-#ifndef PPBOX_DISABLE_DAC
-            , dac_(util::daemon::use_module<ppbox::dac::DacModule>(daemon))
+            : just::common::CommonModuleBase<LiveModule>(daemon, "LiveModule")
+#ifndef JUST_DISABLE_DAC
+            , dac_(util::daemon::use_module<just::dac::DacModule>(daemon))
 #endif
-            , portMgr_(util::daemon::use_module<ppbox::common::PortManager>(daemon))
+            , portMgr_(util::daemon::use_module<just::common::PortManager>(daemon))
             , port_(9001)
-#ifndef PPBOX_CONTAIN_LIVE_WORKER
+#ifndef JUST_CONTAIN_LIVE_WORKER
             , mutex_(9001)
             , is_locked_(false)
 #endif
         {
 
-#ifdef PPBOX_CONTAIN_LIVE_WORKER
-            util::daemon::use_module<ppbox::live_worker::LiveProxy>(daemon);
+#ifdef JUST_CONTAIN_LIVE_WORKER
+            util::daemon::use_module<just::live_worker::LiveProxy>(daemon);
 #else
             process_ = new Process;
             timer_ = new Timer(timer_queue(), 
@@ -68,7 +67,7 @@ namespace ppbox
 
         LiveModule::~LiveModule()
         {
-#ifndef PPBOX_CONTAIN_LIVE_WORKER
+#ifndef JUST_CONTAIN_LIVE_WORKER
             if (is_lock()) {
                 mutex_.unlock();
                 is_locked_ = false;
@@ -88,22 +87,22 @@ namespace ppbox
         {
             error_code ec;
             LOG_INFO("[startup]");
-#ifndef PPBOX_DISABLE_DAC
+#ifndef JUST_DISABLE_DAC
             dac_.set_live_version(version());
             dac_.set_live_name(name());
 #endif
-#ifndef PPBOX_CONTAIN_LIVE_WORKER
+#ifndef JUST_CONTAIN_LIVE_WORKER
             timer_->start();
 
             if (is_lock()) {
                 LOG_INFO("[startup] try_lock");
 
-                boost::filesystem::path cmd_file(ppbox::live_worker::name_string());
+                boost::filesystem::path cmd_file(just::live_worker::name_string());
                 Process::CreateParamter param;
                 param.wait = true;
                 process_->open(cmd_file, param, ec);
                 if (!ec) {
-                    portMgr_.get_port(ppbox::common::live,port_);
+                    portMgr_.get_port(just::common::live,port_);
                     LOG_INFO("[startup] ok port:"<<port_);
                 } else {
                     LOG_WARN("[startup] ec = " << ec.message());
@@ -116,7 +115,7 @@ namespace ppbox
                 }
             }
 #else
-          portMgr_.get_port(ppbox::common::live,port_);
+          portMgr_.get_port(just::common::live,port_);
           LOG_INFO("[startup] ok port:"<<port_);	
 #endif
             return ec;
@@ -124,23 +123,23 @@ namespace ppbox
 
         void LiveModule::check()
         {
-#ifndef PPBOX_CONTAIN_LIVE_WORKER
+#ifndef JUST_CONTAIN_LIVE_WORKER
             error_code ec;
             if (is_lock()) {
                 if (process_ && !process_->is_alive(ec)) {
                     LOG_ERROR("[check] worker is dead: " << ec.message());
 
-#ifndef PPBOX_DISABLE_DAC
-                    util::daemon::use_module<ppbox::dac::DacModule>(get_daemon())
+#ifndef JUST_DISABLE_DAC
+                    util::daemon::use_module<just::dac::DacModule>(get_daemon())
                         .submit(DacRestartInfo(DacRestartInfo::live));
 #endif
                     process_->close(ec);
-                    boost::filesystem::path cmd_file(ppbox::live_worker::name_string());
+                    boost::filesystem::path cmd_file(just::live_worker::name_string());
                     Process::CreateParamter param;
                     param.wait = true;
                     process_->open(cmd_file, param, ec);
                     if (!ec) {
-                        portMgr_.get_port(ppbox::common::live,port_);
+                        portMgr_.get_port(just::common::live,port_);
                         LOG_INFO("[check] ok port:"<<port_);
                     } else {
                         LOG_WARN("[check] ec = " << ec.message());
@@ -156,14 +155,14 @@ namespace ppbox
         bool LiveModule::is_alive()
         {
             error_code ec;
-#ifdef PPBOX_CONTAIN_LIVE_WORKER
+#ifdef JUST_CONTAIN_LIVE_WORKER
             return true;
 #else
             if (is_locked_) {
                 return process_ && process_->is_alive(ec);
             } else {
                 framework::process::Process process;
-                boost::filesystem::path cmd_file(ppbox::live_worker::name_string());
+                boost::filesystem::path cmd_file(just::live_worker::name_string());
                 process.open(cmd_file, ec);
                 return !ec;
             }
@@ -172,7 +171,7 @@ namespace ppbox
 
         void LiveModule::shutdown()
         {
-#ifndef PPBOX_CONTAIN_LIVE_WORKER
+#ifndef JUST_CONTAIN_LIVE_WORKER
             error_code ec;
             if (process_) {
                 error_code ec;
@@ -198,16 +197,16 @@ namespace ppbox
 
         std::string LiveModule::version()
         {
-            //return ppbox::live_worker::version_string();
+            //return just::live_worker::version_string();
             return "1.0.0.1";
         }
 
         std::string LiveModule::name()
         {
-            return ppbox::live_worker::name_string();
+            return just::live_worker::name_string();
         }
 
-#ifndef PPBOX_CONTAIN_LIVE_WORKER
+#ifndef JUST_CONTAIN_LIVE_WORKER
         bool LiveModule::is_lock()
         {
             if (!is_locked_) {
@@ -219,4 +218,4 @@ namespace ppbox
 #endif
 
     } // namespace live
-} // namespace ppbox
+} // namespace just

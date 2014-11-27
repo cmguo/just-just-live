@@ -1,10 +1,10 @@
 // ClassRegister.h
 
-#ifndef _PPBOX_LIVE_CLASS_REGISTER_H_
-#define _PPBOX_LIVE_CLASS_REGISTER_H_
+#ifndef _JUST_LIVE_CLASS_REGISTER_H_
+#define _JUST_LIVE_CLASS_REGISTER_H_
 
 #include <util/tools/ClassRegister.h>
 
-#include "ppbox/live/LiveSource.h"
+#include "just/live/LiveSource.h"
 
-#endif //_PPBOX_LIVE_CLASS_REGISTER_H_
+#endif //_JUST_LIVE_CLASS_REGISTER_H_

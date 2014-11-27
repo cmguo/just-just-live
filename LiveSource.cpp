@@ -1,16 +1,16 @@
 // LiveSource.cpp
 
-#include "ppbox/live/Common.h"
-#include "ppbox/live/LiveSource.h"
+#include "just/live/Common.h"
+#include "just/live/LiveSource.h"
 
-#include <ppbox/cdn/pptv/PptvMedia.h>
+#include <just/cdn/pptv/PptvMedia.h>
 
-#include <ppbox/demux/base/DemuxEvent.h>
-#include <ppbox/demux/segment/SegmentDemuxer.h>
+#include <just/demux/base/DemuxEvent.h>
+#include <just/demux/segment/SegmentDemuxer.h>
 
-#include <ppbox/merge/MergerBase.h>
+#include <just/merge/MergerBase.h>
 
-#include <ppbox/data/segment/SegmentSource.h>
+#include <just/data/segment/SegmentSource.h>
 
 #include <util/protocol/pptv/Base64.h>
 using namespace util::protocol;
@@ -20,16 +20,16 @@ using namespace util::protocol;
 #include <framework/string/Format.h>
 using namespace framework::string;
 
-namespace ppbox
+namespace just
 {
     namespace live
     {
 
-        FRAMEWORK_LOGGER_DECLARE_MODULE_LEVEL("ppbox.live.LiveSource", framework::logger::Debug);
+        FRAMEWORK_LOGGER_DECLARE_MODULE_LEVEL("just.live.LiveSource", framework::logger::Debug);
 
         LiveSource::LiveSource(
             boost::asio::io_service & io_svc)
-            : ppbox::cdn::P2pSource(io_svc)
+            : just::cdn::P2pSource(io_svc)
             , module_(util::daemon::use_module<LiveModule>(io_svc))
         {
         }
@@ -46,7 +46,7 @@ namespace ppbox
         }
 
         void LiveSource::on_stream_status(
-            ppbox::avbase::StreamStatus const & stat)
+            just::avbase::StreamStatus const & stat)
         {
             (void)stat;
         }
@@ -54,7 +54,7 @@ namespace ppbox
         void LiveSource::parse_param(
             std::string const & params)
         {
-            const_cast<ppbox::data::SegmentSource &>(seg_source()).set_time_out(0);
+            const_cast<just::data::SegmentSource &>(seg_source()).set_time_out(0);
         }
 
         bool LiveSource::prepare(
@@ -95,4 +95,4 @@ namespace ppbox
         }
 
     } // namespace live
-} // namespace ppbox
+} // namespace just

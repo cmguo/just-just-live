@@ -1,5 +1,5 @@
 // Version.cpp
 
-#include "ppbox/live/Common.h"
+#include "just/live/Common.h"
 #define VERSION_SOURCE
-#include "ppbox/live/Version.h"
+#include "just/live/Version.h"
