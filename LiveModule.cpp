@@ -83,9 +83,9 @@ namespace just
 #endif
         }
 
-        error_code LiveModule::startup()
+        bool LiveModule::startup(
+            error_code & ec)
         {
-            error_code ec;
             LOG_INFO("[startup]");
 #ifndef JUST_DISABLE_DAC
             dac_.set_live_version(version());
@@ -115,10 +115,10 @@ namespace just
                 }
             }
 #else
-          portMgr_.get_port(just::common::live,port_);
-          LOG_INFO("[startup] ok port:"<<port_);	
+            portMgr_.get_port(just::common::live,port_);
+            LOG_INFO("[startup] ok port:"<<port_);	
 #endif
-            return ec;
+            return !ec;
         }
 
         void LiveModule::check()
@@ -169,10 +169,10 @@ namespace just
 #endif
         }
 
-        void LiveModule::shutdown()
+        bool LiveModule::shutdown(
+            error_code & ec)
         {
 #ifndef JUST_CONTAIN_LIVE_WORKER
-            error_code ec;
             if (process_) {
                 error_code ec;
                 process_->signal(Signal::sig_int, ec);
@@ -193,6 +193,7 @@ namespace just
                 is_locked_ = false;
             }
 #endif
+            return !ec;
         }
 
         std::string LiveModule::version()
