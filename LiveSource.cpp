@@ -29,7 +29,7 @@ namespace just
 
         LiveSource::LiveSource(
             boost::asio::io_service & io_svc)
-            : just::cdn::P2pSource(io_svc)
+            : just::cdn::PptvP2pSource(io_svc)
             , module_(util::daemon::use_module<LiveModule>(io_svc))
         {
         }
